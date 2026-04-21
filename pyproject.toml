@@ -6,6 +6,8 @@ authors = [{ name = "Maryam Waqar", email = "you@example.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
     "crewai[tools]==1.14.2"
+    "google-genai"
+    "openai"
 ]
 
 [project.scripts]
