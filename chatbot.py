@@ -9,7 +9,7 @@ llm = LLM(
 )
 
 
-# 2. Agent Definition
+# 2.Agent Definition
 nutrition_agent = Agent(
     role="Elderly Nutrition Assistant",
     goal="Provide clear, safe, and practical nutritional advice tailored for elderly individuals.",
@@ -24,9 +24,22 @@ nutrition_agent = Agent(
     #memory=True  #short-term mem(remembers within a run)/doesnt save or remember from past sessions.Lightweight internal agent memory for contextual reasoning within an execution.
 )
 
+#3. in-memory chat history/formatting
+def format_history(conversation_history):
+    """convert user-agent conversation history list into readable text prompt"""
+    if not conversation_history:
+        return "no previous conversation"
+    
+    formatted= ""
+    for msg in conversation_history:
+        role = "User" if msg["role"] == "user" else "bot"
+        formatted += f"{role}: {msg['content']}\n"
+    return formatted
+
 
 def run_chat():
     print("Elderly Nutrition Chatbot (type 'exit' to quit)\n")
+    conversation_history = [] #chat history RAM only
 
     while True:
         user_input = input("You: ")
@@ -38,7 +51,8 @@ def run_chat():
         # 3. Define Task instead of tasks.yaml
         nutrition_task = Task(
             description=(
-                f"You are given a question from a user: {user_input}.\n\n"
+                f"Previous conversation:\n{format_history(conversation_history)}\n\n"  # hist
+                f"User's latest message: {user_input}\n\n"
                 "Provide clear, simple, and safe nutritional advice specifically for elderly individuals.\n\n"
                 "Focus on:\n"
                 "- Easy-to-understand explanations\n"
@@ -62,7 +76,12 @@ def run_chat():
 
         result = crew.kickoff()
 
-        print("\nBot:", result, "\n")
+        print("\nbot:", result, "\n") #result obj printed as it is
+        bot_response = str(result)  #convert to string
+        
+        #save both messages to history AFTER each exchange
+        conversation_history.append({"role": "user", "content": user_input})
+        conversation_history.append({"role": "bot", "content": bot_response})
 
 
 if __name__ == "__main__":
