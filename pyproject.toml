@@ -1,0 +1,32 @@
+[project]
+name = "crewai_nutrition_assist"
+version = "0.1.0"
+description = "Advanced L2 RAG nutrition assistant using CrewAI, Qdrant, and Groq."
+authors = [{ name = "Maryam Waqar", email = "mariamwaqarawan@gmail.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai==1.14.2",
+    "crewai[tools]==1.14.2",
+    "google-genai==1.65.0",
+    "openai==2.34.0",
+    "sentence-transformers==5.4.1",
+    "qdrant-client==1.17.1",
+    "rank-bm25==0.2.2",
+    "pdfplumber==0.11.9",
+    "python-docx==1.2.0",
+    "requests==2.33.1",
+    "beautifulsoup4==4.13.5",
+    "numpy==2.4.4",
+    "torch==2.11.0",
+    "transformers==5.8.0",
+    "python-dotenv==1.1.1",
+]
+
+[project.scripts]
+ingest = "crewai_nutrition_assist.ingest:main"
+chat = "crewai_nutrition_assist.chat:main"
+
+[tool.crewai]
+type = "crew"
+
+
