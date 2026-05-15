@@ -2,25 +2,27 @@
 name = "crewai_nutrition_assist"
 version = "0.1.0"
 description = "crewai_nutrition_assist using crewAI"
-authors = [{ name = "Maryam Waqar", email = "you@example.com" }]
+authors = [{ name = "Maryam Waqar", email = "mariamwaqarawan@gmail.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
     "crewai[tools]==1.14.2",
     "google-genai",
-    "openai"
+    "openai",               
+    "pypdf",                  # PDF parsing for ingest.py
+    "python-dotenv",
+    "qdrant-client",
+    "sentence-transformers",
+    "pdfplumber",
+    "python-docx",
+    "beautifulsoup4",
+    "requests",
 ]
 
 [project.scripts]
-crewai_nutrition_assist = "crewai_nutrition_assist.main:run"
-run_crew = "crewai_nutrition_assist.main:run"
-train = "crewai_nutrition_assist.main:train"
-replay = "crewai_nutrition_assist.main:replay"
-test = "crewai_nutrition_assist.main:test"
-run_with_trigger = "crewai_nutrition_assist.main:run_with_trigger"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+ingest = "crewai_nutrition_assist.ingest:main"
+chat = "crewai_nutrition_assist.chat:main"
 
 [tool.crewai]
 type = "crew"
+
+
