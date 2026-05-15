@@ -1,4 +1,13 @@
 .env
+qdrant_storage/
+*.sqlite
+*.db
+*.lock
+*.pdf
+eval_dataset.json
+crewai_nutrition_chatbot/
 __pycache__/
 venv
 .DS_Store
+
+
