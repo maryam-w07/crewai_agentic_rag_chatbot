@@ -3,7 +3,7 @@ name = "crewai_nutrition_assist"
 version = "0.1.0"
 description = "Advanced L2 RAG nutrition assistant using CrewAI, Qdrant, and Groq."
 authors = [{ name = "Maryam Waqar", email = "mariamwaqarawan@gmail.com" }]
-requires-python = ">=3.10,<3.14"
+requires-python = "3.12.3"
 dependencies = [
     "crewai==1.14.2",
     "crewai[tools]==1.14.2",
