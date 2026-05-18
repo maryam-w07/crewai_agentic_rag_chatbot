@@ -1,7 +1,7 @@
 """
 chatbot.py  —  Advanced RAG Nutrition Chatbot
 
-Pipeline: User query → BGE embed → Qdrant search (top 20)  → Cross-encoder rerank(top 5) → Gemini via CrewAI
+Pipeline: User query → BGE embed → Qdrant search (top 20)  → Cross-encoder rerank(top 5) → Groq via CrewAI
 
 Run:
     python chatbot.py
