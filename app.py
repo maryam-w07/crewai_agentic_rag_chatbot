@@ -31,7 +31,8 @@ def load_models():
     embedder = SentenceTransformer("BAAI/bge-base-en-v1.5")
     reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", max_length=512)
     qdrant   = QdrantClient(path=QDRANT_PATH)
-    llm      = LLM(provider="google", model="gemini-2.5-flash")
+    groq_model = os.environ.get("Groq_model_name", "llama-3.1-8b-instant")
+    llm        = LLM(provider="groq", model=f"groq/{groq_model}")
     agent    = Agent(
         role="Elderly Nutrition Assistant",
         goal="Provide clear, safe, and practical nutritional advice for elderly individuals.",
