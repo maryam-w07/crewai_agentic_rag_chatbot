@@ -3,13 +3,14 @@ from sentence_transformers import SentenceTransformer, CrossEncoder
 from qdrant_client import QdrantClient
 from crewai import Agent, Task, Crew, Process
 from crewai.llm import LLM
-uv add streamlit-authenticator
+from crewai_tools import EXASearchTool
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
+OPENAI_API_KEY2 = os.getenv("OPENAI_API_KEY2")
 
-# page layout
+# Page config 
 
 st.set_page_config(
     page_title="Nutrition Assistant",
@@ -17,44 +18,61 @@ st.set_page_config(
     layout="centered",
 )
 
-#configs
+# Exa Search Tool
+
+#Config 
 
 COLLECTION_NAME = "nutrition_knowledge"
 QDRANT_PATH     = "./qdrant_storage"
 TOP_K_RETRIEVE  = 20
 TOP_K_RERANK    = 5
 
-# load all the models once
+# load models once
+print(OPENAI_API_KEY2[:10])
 
 @st.cache_resource
 def load_models():
-    embedder = SentenceTransformer("BAAI/bge-base-en-v1.5")
-    reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", max_length=512)
-    qdrant   = QdrantClient(path=QDRANT_PATH)
-    groq_model = os.environ.get("Groq_model_name", "llama-3.1-8b-instant")
-    llm        = LLM(provider="groq", model=f"groq/{groq_model}")
-    agent    = Agent(
-        role="Elderly Nutrition Assistant",
-        goal="Provide clear, safe, and practical nutritional advice for elderly individuals.",
-        backstory=(
-            "You are a compassionate nutrition expert specialising in elderly care. "
-            "You explain dietary concepts simply and clearly. "
-            "You always base your answers on the provided context when available. "
-            "You never give medical diagnoses — only general nutrition guidance."
-        ),
-        llm=llm,
-        verbose=False,
-    )
-    return embedder, reranker, qdrant, agent
+    embedder   = SentenceTransformer("BAAI/bge-base-en-v1.5")
+    reranker   = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", max_length=512)
+    
+    llm = LLM(
+        model="gpt-4o-mini",
+        api_key=OPENAI_API_KEY2
+        
+       )
+    return embedder, reranker, llm
 
-embedder, reranker, qdrant, agent = load_models()
+embedder, reranker, llm = load_models()
+
+# qdrant (server mode for concurrent sessions) 
+
+qdrant = QdrantClient(url="http://localhost:6333")
+
+# agent
+
+elderly_diet_agent = Agent(
+    role="Geriatric Nutrition Specialist",
+    goal="Answer nutrition and diet questions for elderly individuals concisely and safely.",
+    backstory=(
+        "You are a geriatric nutrition specialist. You only answer questions related to "
+        "food, diet, vitamins, hydration, and nutritional health for older adults. "
+        "For topics not covered by your knowledge base, you use the web search tool "
+        "to find relevant health and nutrition information. "
+        "You never discuss unrelated topics. "
+        "You always keep responses short, clear, and in bullet points. "
+        "You never mention document names, sources, page numbers, or where information came from."
+    ),
+    tools=[exa_tool],
+    llm=llm,
+    verbose=True,
+)
 
 # session state
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Retrievel step
+# Retrieval 
 
 def retrieve(query):
     query_vector = embedder.encode(query, normalize_embeddings=True).tolist()
@@ -67,7 +85,7 @@ def retrieve(query):
     ).points
 
     if not results:
-        return "No relevant information found in the knowledge base."
+        return ""
 
     candidates = [r.payload["text"] for r in results]
     payloads   = [r.payload          for r in results]
@@ -78,13 +96,11 @@ def retrieve(query):
 
     context_parts = []
     for i, (score, text, payload) in enumerate(top, 1):
-        source = payload.get("source", "unknown")
-        page   = payload.get("page", "?")
-        context_parts.append(f"[Source {i}: {source}, page {page}]\n{text}")
+        context_parts.append(text)
 
-    return "\n\n---\n\n".join(context_parts)
+    return "\n\n".join(context_parts)
 
-# chat history formatting
+#Chat history formatter 
 
 def format_history():
     if not st.session_state.messages:
@@ -101,46 +117,45 @@ st.title("Nutrition Assistant")
 st.caption("Providing evidence-based nutritional guidance for older adults.")
 st.divider()
 
-# Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Chat input
 user_input = st.chat_input("Ask a nutrition question...")
 
 if user_input:
-    # Show user message
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Generate response
     with st.chat_message("assistant"):
         with st.spinner("Generating response..."):
             context = retrieve(user_input)
 
             task = Task(
                 description=(
-                    f"=== Conversation History ===\n"
-                    f"{format_history()}\n\n"
-                    f"=== Retrieved Context ===\n"
-                    f"{context}\n\n"
-                    f"=== User Question ===\n"
-                    f"{user_input}\n\n"
-                    "Answer using the retrieved context above as your primary source. "
-                    "Cite the source label (e.g. Source 1) when referencing it. "
-                    "If the context does not cover the question, use your general knowledge "
-                    "and mention that. Keep the response clear and simple for elderly readers."
+                    f"Conversation history:\n{format_history()}\n\n"
+                    f"Knowledge base context (use if relevant, do not cite it):\n{context}\n\n"
+                    f"User question: {user_input}\n\n"
+                    "Instructions:\n"
+                    "1. If this is a greeting or small talk, reply in one short friendly sentence only.\n"
+                    "2. If this is a nutrition or diet question for elderly:\n"
+                    "   - Check the knowledge base context first.\n"
+                    "   - If context is insufficient, use the web search tool to find relevant information.\n"
+                    "   - Respond in short bullet points only.\n"
+                    "   - Never mention documents, sources, page numbers, or search results.\n"
+                    "3. If this is unrelated to elderly nutrition or health, respond with:\n"
+                    "   'My knowledge is limited to nutrition and diet topics for older adults.'\n"
                 ),
                 expected_output=(
-                    "A clear, concise, and helpful nutrition response tailored for elderly "
-                    "individuals, with source citations where applicable."
+                    "A short, concise response in bullet points for nutrition questions, "
+                    "or a single sentence for greetings and off-topic queries. "
+                    "No document references, no source mentions."
                 ),
-                agent=agent,
+                agent=elderly_diet_agent,
             )
 
-            crew     = Crew(agents=[agent], tasks=[task], process=Process.sequential, verbose=False)
+            crew     = Crew(agents=[elderly_diet_agent], tasks=[task], process=Process.sequential, verbose=False)
             result   = crew.kickoff()
             response = str(result)
 
