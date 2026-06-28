@@ -1,0 +1,82 @@
+[
+  {
+    "id": 0,
+    "question": "What is the SNAQ questionnaire used for in elderly nutrition screening?",
+    "gold_chunk_ids": [85],
+    "source": "EatingWellANutritionResourceforOlderPeople-1 (Copy).pdf",
+    "page": 54,
+    "chunk_preview": "SIMPLIFIED NUTRITIONAL APPETITE QUESTIONNAIRE..."
+  },
+  {
+    "id": 1,
+    "question": "Which carbohydrate foods are recommended for better blood glucose control?",
+    "gold_chunk_ids": [38],
+    "source": "EatingWellANutritionResourceforOlderPeople-1 (Copy).pdf",
+    "page": 17,
+    "chunk_preview": "will help with blood glucose control..."
+  },
+  {
+    "id": 2,
+    "question": "What are some healthy bread-based meal ideas for older adults?",
+    "gold_chunk_ids": [70],
+    "source": "...",
+    "page": 43,
+    "chunk_preview": "Bread based meals can be nourishing..."
+  },
+  {
+    "id": 3,
+    "question": "How much fluid should older adults drink each day?",
+    "gold_chunk_ids": [49],
+    "source": "...",
+    "page": 27,
+    "chunk_preview": "Having enough fluid..."
+  },
+  {
+    "id": 4,
+    "question": "Should overweight older adults try to lose weight?",
+    "gold_chunk_ids": [36],
+    "source": "...",
+    "page": 16,
+    "chunk_preview": "I'm overweight, should I try and lose weight?"
+  },
+  {
+    "id": 5,
+    "question": "Why are dairy foods important for older adults?",
+    "gold_chunk_ids": [41],
+    "source": "...",
+    "page": 20,
+    "chunk_preview": "The value of dairy foods..."
+  },
+  {
+    "id": 6,
+    "question": "What are the benefits of aerobic and flexibility exercises for older adults?",
+    "gold_chunk_ids": [79],
+    "source": "...",
+    "page": 49,
+    "chunk_preview": "Aerobic Exercise..."
+  },
+  {
+    "id": 7,
+    "question": "Why is malnutrition screening important for older adults?",
+    "gold_chunk_ids": [83],
+    "source": "...",
+    "page": 52,
+    "chunk_preview": "Malnutrition risk screening tools..."
+  },
+  {
+    "id": 8,
+    "question": "Why is healthy nutrition becoming more important as life expectancy increases?",
+    "gold_chunk_ids": [22],
+    "source": "...",
+    "page": 4,
+    "chunk_preview": "Foreword..."
+  },
+  {
+    "id": 9,
+    "question": "What are some examples of finger foods suitable for older adults?",
+    "gold_chunk_ids": [62],
+    "source": "...",
+    "page": 37,
+    "chunk_preview": "The following finger food menu..."
+  }
+]
