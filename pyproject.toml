@@ -1,7 +1,7 @@
 [project]
 name = "crewai_nutrition_assist"
 version = "0.1.0"
-description = "Advanced L2 RAG nutrition assistant using CrewAI, Qdrant, and Groq."
+description = "Advanced L2 RAG nutrition assistant using CrewAI, Qdrant, and GPT-4o-mini."
 authors = [{ name = "Maryam Waqar", email = "mariamwaqarawan@gmail.com" }]
 requires-python = "3.12.3"
 dependencies = [
