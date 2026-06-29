@@ -94,7 +94,7 @@ with MCPServerAdapter(exa_params) as exa_tools:
             "   Simply reply directly using a single friendly sentence.\n"
             "2. For nutrition questions, always run the 'Query Local Nutrition Knowledge Base' tool FIRST.\n"
             "3. If the local knowledge base tool returns insufficient or missing context for a nutrition topic, "
-            "   only then utilize the 'EXASearchTool' to find answers on the live web.\n"
+            "   only then utilize the 'web_search_exa' mcp tool to find answers on the live web.\n"
             "4. If a query is entirely unrelated to health, food, or senior care, do not call any tools. "
             "   Politely refuse to answer.\n"
             "5. Keep responses short, clear, and structured in bullet points.\n"
